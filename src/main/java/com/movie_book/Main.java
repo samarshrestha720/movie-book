@@ -5,6 +5,7 @@ import com.movie_book.user.User;
 import com.movie_book.dbConnection.TableCreateService;
 import com.movie_book.user.UserController;
 import com.movie_book.user.UserService;
+import com.movie_book.user.movie.MovieController;
 
 import io.javalin.Javalin;
 
@@ -17,6 +18,11 @@ public class Main {
 
         UserController uc = new UserController();
         uc.registerUserRoutes(app);
+        MovieController mc = new  MovieController();
+        mc.registerMovieRoutes(app);
+        
+        
+        
         app.get("/create-seat-table", ctx -> {
             TableCreateService tcs = new TableCreateService();
             tcs.createSeatTable();

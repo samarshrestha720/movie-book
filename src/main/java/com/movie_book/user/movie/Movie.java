@@ -15,6 +15,16 @@ public class Movie {
     private String description;
     private double price;
     private String poster_url;
+    
+    public Movie(){}
+    
+    public Movie(int id, String name, String description, double price, String poster_url){
+        setId(id);
+        setName(name);
+        setDescription(description);
+        setPrice(price);
+        setPoster_url(poster_url);
+    }
 
     public int getId() {
         return id;

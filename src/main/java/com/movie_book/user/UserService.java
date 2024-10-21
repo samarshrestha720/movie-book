@@ -50,37 +50,32 @@ public class UserService {
         }
 
     }
-    
+
     // Method to verify user login credentials
     public boolean loginUser(String email, String password) throws SQLException {
         String loginQuery = "SELECT * FROM user WHERE email = ?";
-        try(PreparedStatement prstm = dbc.estConnection().prepareStatement(loginQuery);) {
+        try (PreparedStatement prstm = dbc.estConnection().prepareStatement(loginQuery);) {
             prstm.setString(1, email);
             ResultSet result = prstm.executeQuery();
             // Check if a user with the provided email exists
-        if (result.next()) {
-            // Get the stored password (assumed to be hashed) for comparison
-            String storedPassword = result.getString("password");
+            if (result.next()) {
+                // Get the stored password (assumed to be hashed) for comparison
+                String storedPassword = result.getString("password");
 
-            // If the password matches, return true (login successful)
-            if (storedPassword.equals(password)) {
-                return true;
+                // If the password matches, return true (login successful)
+                if (storedPassword.equals(password)) {
+                    return true;
+                }
             }
-        }
 
-        // If no match or incorrect password, return false
-        return false;
+            // If no match or incorrect password, return false
+            return false;
         } catch (Exception e) {
             System.out.println(e);
             return false;
         }
-        
 
-        
-
-        
-    } 
-    
+    }
 
     public List<User> getAllUsers() throws SQLException {
         String getQuery = "SELECT * FROM user";
