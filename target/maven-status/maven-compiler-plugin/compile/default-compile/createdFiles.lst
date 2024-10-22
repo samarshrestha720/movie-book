@@ -1,6 +1,9 @@
 com\movie_book\movie\Movie.class
-com\movie_book\show\Show.class
+com\movie_book\ticket\TicketService.class
 com\movie_book\show\ShowService.class
-com\movie_book\movie\MovieController.class
 com\movie_book\movie\MovieService.class
+com\movie_book\show\Show.class
+com\movie_book\ticket\Ticket.class
+com\movie_book\ticket\TicketController.class
+com\movie_book\movie\MovieController.class
 com\movie_book\show\ShowController.class

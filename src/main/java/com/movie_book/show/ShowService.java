@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class ShowService {
 
-    DbConnection dbc = new DbConnection();
+    private DbConnection dbc = new DbConnection();
 
     // Get all shows
     public List<Show> getAllShows() throws SQLException {

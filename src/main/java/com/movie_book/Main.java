@@ -7,6 +7,7 @@ import com.movie_book.user.UserController;
 import com.movie_book.user.UserService;
 import com.movie_book.movie.MovieController;
 import com.movie_book.show.ShowController;
+import com.movie_book.ticket.TicketController;
 
 import io.javalin.Javalin;
 
@@ -24,6 +25,8 @@ public class Main {
         movieController.registerMovieRoutes(app);
         ShowController showController = new ShowController();
         showController.registerShowRoutes(app);
+        TicketController ticketController = new TicketController();
+        ticketController.registerTicketRoutes(app);
         
         
         
