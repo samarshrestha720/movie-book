@@ -5,7 +5,8 @@ import com.movie_book.user.User;
 import com.movie_book.dbConnection.TableCreateService;
 import com.movie_book.user.UserController;
 import com.movie_book.user.UserService;
-import com.movie_book.user.movie.MovieController;
+import com.movie_book.movie.MovieController;
+import com.movie_book.show.ShowController;
 
 import io.javalin.Javalin;
 
@@ -16,10 +17,13 @@ public class Main {
                 .get("/", ctx -> ctx.result("Hello World"))
                 .start(7070);
 
-        UserController uc = new UserController();
-        uc.registerUserRoutes(app);
-        MovieController mc = new  MovieController();
-        mc.registerMovieRoutes(app);
+        //register routes
+        UserController userController = new UserController();
+        userController.registerUserRoutes(app);
+        MovieController movieController = new  MovieController();
+        movieController.registerMovieRoutes(app);
+        ShowController showController = new ShowController();
+        showController.registerShowRoutes(app);
         
         
         
