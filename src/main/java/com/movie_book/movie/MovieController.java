@@ -4,6 +4,7 @@
  */
 package com.movie_book.movie;
 
+import com.movie_book.Role;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
@@ -18,11 +19,11 @@ public class MovieController {
     MovieService movieService = new MovieService();
 
     public void registerMovieRoutes(Javalin app) {
-        app.get("/api/movie", ctx -> getAllMovies(ctx));                 // Get all movies
-        app.get("/api/movie/{id}", ctx -> getMovieById(ctx));            // Get a movie by ID
-        app.post("/api/movie", ctx -> addMovie(ctx));                   // Add a new movie
-        app.put("/api/movie/{id}", ctx -> updateMovie(ctx));             // Update an existing movie
-        app.delete("/api/movie/{id}", ctx -> deleteMovie(ctx));          // Delete a movie
+        app.get("/api/movie", ctx -> getAllMovies(ctx), Role.anyone);                 // Get all movies
+        app.get("/api/movie/{id}", ctx -> getMovieById(ctx), Role.anyone);            // Get a movie by ID
+        app.post("/api/movie", ctx -> addMovie(ctx), Role.admin);                   // Add a new movie
+        app.put("/api/movie/{id}", ctx -> updateMovie(ctx), Role.admin);             // Update an existing movie
+        app.delete("/api/movie/{id}", ctx -> deleteMovie(ctx), Role.admin);          // Delete a movie
 
     }
 

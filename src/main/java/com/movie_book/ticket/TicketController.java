@@ -4,6 +4,7 @@
  */
 package com.movie_book.ticket;
 
+import com.movie_book.Role;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import java.util.List;
@@ -18,18 +19,24 @@ public class TicketController {
 
     // Register ticket routes
     public void registerTicketRoutes(Javalin app) {
-        app.post("/api/ticket", ctx -> addTicket(ctx));                  // Add a new ticket
-        app.get("/api/ticket", ctx -> getAllTickets(ctx));              // Get all tickets
-        app.get("/api/ticket/{id}", ctx -> getTicketById(ctx));          // Get a ticket by ID
-        app.delete("/api/ticket/{id}", ctx -> deleteTicket(ctx));        // Delete a ticket
+        app.post("/api/ticket", ctx -> createTicket(ctx), Role.user);                  // Add a new ticket
+        app.get("/api/ticket", ctx -> getAllTickets(ctx), Role.admin);              // Get all tickets
+        app.get("/api/ticket/{id}", ctx -> getTicketById(ctx), Role.user);          // Get a ticket by ID
+        app.delete("/api/ticket/{id}", ctx -> deleteTicket(ctx), Role.admin);        // Delete a ticket
     }
 
     // Add a new ticket
-    private void addTicket(Context ctx) {
+    private void createTicket(Context ctx) {
         Ticket ticket = ctx.bodyAsClass(Ticket.class);
         try {
-            ticketService.addTicket(ticket);
-            ctx.status(201).json("Ticket added successfully");
+            Long ticketId = ticketService.addTicket(ticket);
+            if (ticketId != null) {
+                ctx.status(201).json("Ticket added successfully with id: " + ticketId);
+                return;
+            }
+            ctx.status(400).json("Failed to create ticket.");
+            return;
+
         } catch (Exception e) {
             System.out.println(e);
             ctx.status(500).json("DB error. Error: " + e);

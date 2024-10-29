@@ -5,11 +5,13 @@
 package com.movie_book.ticket;
 
 import com.movie_book.dbConnection.DbConnection;
+import com.movie_book.seat.SeatService;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,16 +20,34 @@ import java.util.List;
  * @author Dr. PANDA 002
  */
 public class TicketService {
+
     private DbConnection dbc = new DbConnection();
 
     // Method to add a ticket
-    public void addTicket(Ticket ticket) throws SQLException {
-        String insertQuery = "INSERT INTO tickets (user_id, show_id, booked_at) VALUES (?, ?, ?)";
-        try (PreparedStatement prstm = dbc.estConnection().prepareStatement(insertQuery)) {
+    public Long addTicket(Ticket ticket) throws SQLException {
+        String insertQuery = "INSERT INTO ticket (user_id, show_id, booked_at) VALUES (?, ?, ?)";
+
+        //Check if the user has selected any seats before creating ticket.
+        //Returns true if user can book. ie: user has selected seats. False if user has not selected seats.
+        if (!new SeatService().getProcessingSeatsOfUser(ticket.getShowId(), ticket.getUserId())) {
+            return null;
+        }
+        try (PreparedStatement prstm = dbc.estConnection().prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
             prstm.setInt(1, ticket.getUserId());
             prstm.setLong(2, ticket.getShowId());
-            prstm.setTimestamp(3, Timestamp.valueOf(ticket.getBooked_at()));
-            prstm.executeUpdate();
+            prstm.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
+            if (prstm.executeUpdate() == 1) {
+                try (ResultSet generatedKeys = prstm.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        //Updating Seats to booked
+                        new SeatService().bookSeats(ticket.getUserId(), ticket.getShowId(), generatedKeys.getLong(1));
+                        return generatedKeys.getLong(1);
+                    } else {
+                        throw new SQLException("Creating user failed, no ID obtained.");
+                    }
+                }
+            }
+            return null;
         }
     }
 
@@ -35,8 +55,7 @@ public class TicketService {
     public List<Ticket> getAllTickets() throws SQLException {
         List<Ticket> tickets = new ArrayList<>();
         String query = "SELECT * FROM tickets";
-        try (Statement stmt = dbc.estConnection().createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
+        try (Statement stmt = dbc.estConnection().createStatement(); ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
                 Ticket ticket = new Ticket();
                 ticket.setId(rs.getLong("id"));
@@ -72,7 +91,7 @@ public class TicketService {
         String deleteQuery = "DELETE FROM tickets WHERE id = ?";
         try (PreparedStatement prstm = dbc.estConnection().prepareStatement(deleteQuery)) {
             prstm.setLong(1, id);
-            if(prstm.executeUpdate()==1){
+            if (prstm.executeUpdate() == 1) {
                 return true;
             }
             return false;

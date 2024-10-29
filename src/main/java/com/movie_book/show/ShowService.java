@@ -41,7 +41,7 @@ public class ShowService {
     }
 
     // Get a single show by ID
-    public Show getShowById(long id) throws SQLException {
+    public Show getShowById(Long id) throws SQLException {
         String query = "SELECT * FROM `show` WHERE id=?";
         Show show = new Show();
 
@@ -56,6 +56,26 @@ public class ShowService {
             }
         }
         return show;
+    }
+
+    // Get shows by MovieId
+    public List<Show> getShowsByMovieId(Long movieId) throws SQLException {
+        List<Show> shows = new ArrayList<>();
+        String query = "SELECT * FROM `show` WHERE movie_id=?";
+
+        try (PreparedStatement stmt = dbc.estConnection().prepareStatement(query)) {
+            stmt.setLong(1, movieId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Show show = new Show();
+                show.setId(rs.getLong("id"));
+                show.setTime(rs.getTimestamp("time").toLocalDateTime());
+                show.setMovieId(rs.getLong("movie_id"));
+                shows.add(show);
+            }
+        }
+        return shows;
     }
 
     // Add a new show
@@ -92,7 +112,7 @@ public class ShowService {
 
         try (PreparedStatement stmt = dbc.estConnection().prepareStatement(query)) {
             stmt.setLong(1, id);
-            if(stmt.executeUpdate()==1){
+            if (stmt.executeUpdate() == 1) {
                 return true;
             }
             return false;

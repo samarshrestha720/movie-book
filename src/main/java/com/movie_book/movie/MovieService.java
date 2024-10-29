@@ -75,7 +75,7 @@ public class MovieService {
             stmt.setString(2, movie.getDescription());
             stmt.setDouble(3, movie.getPrice());
             stmt.setString(4, movie.getPoster_url());
-            if(stmt.executeUpdate()>0){
+            if (stmt.executeUpdate() > 0) {
                 return movie;
             }
             return null;
@@ -94,7 +94,7 @@ public class MovieService {
             stmt.setDouble(3, movie.getPrice());
             stmt.setString(4, movie.getPoster_url());
             stmt.setInt(5, movie.getId());
-            if(stmt.executeUpdate()==1){
+            if (stmt.executeUpdate() == 1) {
                 return movie;
             }
             return null;
@@ -109,7 +109,7 @@ public class MovieService {
         String query = "DELETE FROM movie WHERE id = ?";
         try (PreparedStatement stmt = dbc.estConnection().prepareStatement(query)) {
             stmt.setInt(1, id);
-            if(stmt.executeUpdate()>0){
+            if (stmt.executeUpdate() > 0) {
                 return true;
             }
             return false;

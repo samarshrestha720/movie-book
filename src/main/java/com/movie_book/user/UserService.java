@@ -1,5 +1,6 @@
 package com.movie_book.user;
 
+import com.movie_book.Role;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -52,7 +53,7 @@ public class UserService {
     }
 
     // Method to verify user login credentials
-    public boolean loginUser(String email, String password) throws SQLException {
+    public String loginUser(String email, String password) throws SQLException {
         String loginQuery = "SELECT * FROM user WHERE email = ?";
         try (PreparedStatement prstm = dbc.estConnection().prepareStatement(loginQuery);) {
             prstm.setString(1, email);
@@ -64,15 +65,15 @@ public class UserService {
 
                 // If the password matches, return true (login successful)
                 if (storedPassword.equals(password)) {
-                    return true;
+                    return result.getString("role");
                 }
             }
 
             // If no match or incorrect password, return false
-            return false;
+            return null;
         } catch (Exception e) {
             System.out.println(e);
-            return false;
+            return null;
         }
 
     }
